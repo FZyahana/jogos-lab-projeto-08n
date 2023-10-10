@@ -8,11 +8,25 @@ pygame.init()
 largura, altura = 1280, 720
 tela = pygame.display.set_mode((largura, altura))
 
-#Importar a imagem do corredor
+# Importar a imagem do corredor
 sprite_main = pygame.image.load("sprite_main_test.png")
 scale_sprite = (160/sprite_main.get_height())
 sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_width(),scale_sprite*sprite_main.get_height()))
 print(sprite_main.get_height())
+
+# Importar o fundo
+background1_1 = pygame.image.load("assets/parallax-forest-back-trees.png")
+scale_background = (240/background1_1.get_height())
+background1_1 = pygame.transform.scale(background1_1,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
+background1_2 = pygame.image.load("assets/parallax-forest-front-trees.png")
+scale_background = (240/background1_1.get_height())
+background1_2 = pygame.transform.scale(background1_2,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
+background1_3 = pygame.image.load("assets/parallax-forest-lights.png")
+scale_background = (240/background1_1.get_height())
+background1_3 = pygame.transform.scale(background1_3,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
+background1_4 = pygame.image.load("assets/parallax-forest-middle-trees.png")
+scale_background = (240/background1_1.get_height())
+background1_4 = pygame.transform.scale(background1_4,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
 
 # Definir variáveis para o jogo
 pos = 0
@@ -40,7 +54,11 @@ while executando:
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
 
     # Desenhar objetos, personagens, etc. aqui
-    pygame.draw.rect(tela, (255,0,0), (0,0, 1280, 240))
+    tela.blit(background1_1,(0,0))
+    tela.blit(background1_3,(0,0))
+    tela.blit(background1_4,(0,0))
+    tela.blit(background1_2,(0,0))
+    #pygame.draw.rect(tela, (255,0,0), (0,0, 1280, 240))
 
     # Desenhar personagem principal
     tela.blit(sprite_main,(0,240+pos*160))

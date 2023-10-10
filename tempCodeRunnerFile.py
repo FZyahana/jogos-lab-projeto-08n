@@ -1,0 +1,1 @@
+    tela.blit(background1_3,(0,0))
