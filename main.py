@@ -16,23 +16,24 @@ sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_w
 print(sprite_main.get_height())
 
 # Importar o fundo fase 1
+# Considerando que todas as imagens de um parallel vão ter mesmo tamanho, vou deixar o código eficiente
 background1_1 = pygame.image.load("assets/parallax-forest-back-trees.png")
 scale_background = (240/background1_1.get_height())
 background1_1 = pygame.transform.scale(background1_1,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
 
 #2
 background1_2 = pygame.image.load("assets/parallax-forest-lights.png")
-scale_background = (240/background1_1.get_height())
+# scale_background = (240/background1_1.get_height())
 background1_2 = pygame.transform.scale(background1_2,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
 
 #3
 background1_3 = pygame.image.load("assets/parallax-forest-middle-trees.png")
-scale_background = (240/background1_1.get_height())
+# scale_background = (240/background1_1.get_height())
 background1_3 = pygame.transform.scale(background1_3,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
 
 #4
 background1_4 = pygame.image.load("assets/parallax-forest-front-trees.png")
-scale_background = (240/background1_1.get_height())
+# scale_background = (240/background1_1.get_height())
 background1_4 = pygame.transform.scale(background1_4,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
 
 
@@ -43,6 +44,26 @@ background2_x = [0,408,816,1224,1632]
 background3_x = [0,408,816,1224,1632]
 background4_x = [0,408,816,1224,1632]
 
+# def backgroundPosReset():
+#     background1_x = [0,408,816,1224,1632]
+#     background2_x = [0,408,816,1224,1632]
+#     background3_x = [0,408,816,1224,1632]
+#     background4_x = [0,408,816,1224,1632]
+
+# Função pra blitar os cenários
+def blitParallelBackground_indiv(arraypos,img,speed):
+    for i in range(5):
+        tela.blit(img,(arraypos[i],0))
+        arraypos[i]-=speed
+        if arraypos[i] <= -408:
+            arraypos[i] = max(arraypos)+408-5
+
+def blitParallelBackground_full(matrixpos,arrayimg,arrayspeed):
+
+    blitParallelBackground_indiv(matrixpos[0],arrayimg[0],arrayspeed[0])
+    blitParallelBackground_indiv(matrixpos[1],arrayimg[1],arrayspeed[1])
+    blitParallelBackground_indiv(matrixpos[2],arrayimg[2],arrayspeed[2])
+    blitParallelBackground_indiv(matrixpos[3],arrayimg[3],arrayspeed[3])
 
 # Defina o título da janela
 pygame.display.set_caption("Projeto 08N JogosLab")
@@ -73,35 +94,14 @@ while executando:
     velocidade3 = 3
     velocidade4 = 4
 
-
-    for i in range(5):
-        tela.blit(background1_1,(background1_x[i],0))
-        background1_x[i]-=1
-        if background1_x[i] <= -408:
-            background1_x[i] = max(background1_x)+408
-
-    for i in range(5):
-        tela.blit(background1_2,(background2_x[i],0))
-        background2_x[i]-=2
-        if background2_x[i] <= -408:
-            background2_x[i] = max(background2_x)+408
-    for i in range(5):
-        tela.blit(background1_3,(background3_x[i],0))
-        background3_x[i]-=3
-        if background3_x[i] <= -408:
-            background3_x[i] = max(background3_x)+408
-    for i in range(5):
-        tela.blit(background1_4,(background4_x[i],0))
-        background4_x[i]-=4
-        if background4_x[i] <= -408:
-            background4_x[i] = max(background4_x)+408
-
-
-    #pygame.draw.rect(tela, (255,0,0), (0,0, 1280, 240))
+    #definindo posições, img e velocidades por fase
+    matrixpos = [background1_x,background2_x,background3_x,background4_x]
+    arrayimg = [background1_1,background1_2,background1_3,background1_4]
+    arrayspeed = [velocidade1,velocidade2,velocidade3,velocidade4]
+    blitParallelBackground_full(matrixpos,arrayimg,arrayspeed)
 
     # Desenhar personagem principal
     tela.blit(sprite_main,(0,240+pos*160))
-
 
     # Atualizar a tela
     pygame.display.flip()
