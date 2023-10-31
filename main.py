@@ -38,17 +38,18 @@ background1_4 = pygame.transform.scale(background1_4,(scale_background*backgroun
 
 
 # Definir variáveis para o jogo
+
+velocidade1 = 1
+velocidade2 = 2
+velocidade3 = 3
+velocidade4 = 4
+
 pos = 0
+
 background1_x = [0,408,816,1224,1632]
 background2_x = [0,408,816,1224,1632]
 background3_x = [0,408,816,1224,1632]
 background4_x = [0,408,816,1224,1632]
-
-# def backgroundPosReset():
-#     background1_x = [0,408,816,1224,1632]
-#     background2_x = [0,408,816,1224,1632]
-#     background3_x = [0,408,816,1224,1632]
-#     background4_x = [0,408,816,1224,1632]
 
 # Função pra blitar os cenários
 def blitParallelBackground_indiv(arraypos,img,speed):
@@ -87,12 +88,6 @@ while executando:
     # Limpar a tela
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
 
-    # Desenhar objetos, personagens, etc. aqui
-
-    velocidade1 = 1
-    velocidade2 = 2
-    velocidade3 = 3
-    velocidade4 = 4
 
     #definindo posições, img e velocidades por fase
     matrixpos = [background1_x,background2_x,background3_x,background4_x]
