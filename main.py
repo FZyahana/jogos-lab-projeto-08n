@@ -13,7 +13,6 @@ tela = pygame.display.set_mode((largura, altura))
 sprite_main = pygame.image.load("sprite_main_test.png")
 scale_sprite = (160/sprite_main.get_height())
 sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_width(),scale_sprite*sprite_main.get_height()))
-print(sprite_main.get_height())
 
 # Importar o fundo fase 1
 # Considerando que todas as imagens de um parallel vão ter mesmo tamanho, vou deixar o código eficiente
@@ -24,17 +23,21 @@ background1_1 = pygame.transform.scale(background1_1,(scale_background*backgroun
 #2
 background1_2 = pygame.image.load("assets/parallax-forest-lights.png")
 # scale_background = (240/background1_1.get_height())
-background1_2 = pygame.transform.scale(background1_2,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
+background1_2 = pygame.transform.scale(background1_2,(scale_background*background1_2.get_width(),scale_background*background1_2.get_height()))
 
 #3
 background1_3 = pygame.image.load("assets/parallax-forest-middle-trees.png")
 # scale_background = (240/background1_1.get_height())
-background1_3 = pygame.transform.scale(background1_3,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
+background1_3 = pygame.transform.scale(background1_3,(scale_background*background1_3.get_width(),scale_background*background1_3.get_height()))
 
 #4
 background1_4 = pygame.image.load("assets/parallax-forest-front-trees.png")
 # scale_background = (240/background1_1.get_height())
-background1_4 = pygame.transform.scale(background1_4,(scale_background*background1_1.get_width(),scale_background*background1_1.get_height()))
+background1_4 = pygame.transform.scale(background1_4,(scale_background*background1_4.get_width(),scale_background*background1_4.get_height()))
+print(background1_1)
+print(background1_2)
+print(background1_3)
+print(background1_4)
 
 
 # Definir variáveis para o jogo
