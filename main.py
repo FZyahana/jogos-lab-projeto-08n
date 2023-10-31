@@ -9,10 +9,41 @@ pygame.init()
 largura, altura = 1280, 720
 tela = pygame.display.set_mode((largura, altura))
 
+# Definir classe da sprite do main
+class AnimatedSprite(pygame.sprite.Sprite):
+    def __init__(self, image_files, x, y, frame_duration):
+        super().__init__()
+
+        self.images = []
+        for file in image_files:
+            png = pygame.image.load(file)
+            escala = (160/png.get_height())
+            png = pygame.transform.scale(png,(escala*png.get_width(),escala*png.get_height()))
+            self.images.append(png)
+
+        self.current_image = 0
+        self.image = self.images[self.current_image]
+        self.rect = self.image.get_rect()
+        self.rect.topleft = (x, y)
+
+        self.frame_duration = frame_duration
+        self.last_update = pygame.time.get_ticks()
+
+    def update(self):
+        now = pygame.time.get_ticks()
+        if now - self.last_update > self.frame_duration:
+            self.last_update = now
+            self.current_image = (self.current_image + 1) % len(self.images)
+            self.image = self.images[self.current_image]
+
+
 # Importar a imagem do corredor
-sprite_main = pygame.image.load("sprite_main_test.png")
-scale_sprite = (160/sprite_main.get_height())
-sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_width(),scale_sprite*sprite_main.get_height()))
+sprite_image_files = ["Run (1).png","RUn (2).png", "Run (3).png", "Run (4).png", "Run (5).png", "Run (6).png", "Run (7).png", "Run (8).png"]
+for i in range(len(sprite_image_files)):
+    sprite_image_files[i] = "assets\\sprite\\" + sprite_image_files[i]
+sprite_main = AnimatedSprite(sprite_image_files,0,0,1)
+#scale_sprite = (160/sprite_main.get_height())
+#sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_width(),scale_sprite*sprite_main.get_height()))
 
 # Importar o fundo fase 1
 # Considerando que todas as imagens de um parallel vão ter mesmo tamanho, vou deixar o código eficiente
@@ -34,10 +65,6 @@ background1_3 = pygame.transform.scale(background1_3,(scale_background*backgroun
 background1_4 = pygame.image.load("assets/parallax-forest-front-trees.png")
 # scale_background = (240/background1_1.get_height())
 background1_4 = pygame.transform.scale(background1_4,(scale_background*background1_4.get_width(),scale_background*background1_4.get_height()))
-print(background1_1)
-print(background1_2)
-print(background1_3)
-print(background1_4)
 
 
 # Definir variáveis para o jogo
@@ -99,7 +126,8 @@ while executando:
     blitParallelBackground_full(matrixpos,arrayimg,arrayspeed)
 
     # Desenhar personagem principal
-    tela.blit(sprite_main,(0,240+pos*160))
+    tela.blit(sprite_main.image,(0,240+pos*160))
+    sprite_main.update()
 
     # Atualizar a tela
     pygame.display.flip()
