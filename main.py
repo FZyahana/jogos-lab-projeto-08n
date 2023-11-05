@@ -8,6 +8,7 @@ pygame.init()
 # Defina o tamanho da tela
 largura, altura = 1280, 720
 tela = pygame.display.set_mode((largura, altura))
+clock = pygame.time.Clock()
 
 # Definir classe da sprite do main
 class AnimatedSprite(pygame.sprite.Sprite):
@@ -41,7 +42,7 @@ class AnimatedSprite(pygame.sprite.Sprite):
 sprite_image_files = ["Run (1).png","RUn (2).png", "Run (3).png", "Run (4).png", "Run (5).png", "Run (6).png", "Run (7).png", "Run (8).png"]
 for i in range(len(sprite_image_files)):
     sprite_image_files[i] = "assets\\sprite\\" + sprite_image_files[i]
-sprite_main = AnimatedSprite(sprite_image_files,0,0,1)
+sprite_main = AnimatedSprite(sprite_image_files,0,0,40)
 #scale_sprite = (160/sprite_main.get_height())
 #sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_width(),scale_sprite*sprite_main.get_height()))
 
@@ -80,10 +81,11 @@ background1_x = [0,408,816,1224,1632]
 background2_x = [0,408,816,1224,1632]
 background3_x = [0,408,816,1224,1632]
 background4_x = [0,408,816,1224,1632]
+array_road = [0,1264]
 
 # Função pra blitar os cenários
-def blitParallelBackground_indiv(arraypos,img,speed):
-    for i in range(5):
+def blitParallelBackground_indiv(arraypos,img,speed,qtd):
+    for i in range(qtd):
         tela.blit(img,(arraypos[i],0))
         arraypos[i]-=speed
         if arraypos[i] <= -408:
@@ -91,10 +93,10 @@ def blitParallelBackground_indiv(arraypos,img,speed):
 
 def blitParallelBackground_full(matrixpos,arrayimg,arrayspeed):
 
-    blitParallelBackground_indiv(matrixpos[0],arrayimg[0],arrayspeed[0])
-    blitParallelBackground_indiv(matrixpos[1],arrayimg[1],arrayspeed[1])
-    blitParallelBackground_indiv(matrixpos[2],arrayimg[2],arrayspeed[2])
-    blitParallelBackground_indiv(matrixpos[3],arrayimg[3],arrayspeed[3])
+    blitParallelBackground_indiv(matrixpos[0],arrayimg[0],arrayspeed[0],5)
+    blitParallelBackground_indiv(matrixpos[1],arrayimg[1],arrayspeed[1],5)
+    blitParallelBackground_indiv(matrixpos[2],arrayimg[2],arrayspeed[2],5)
+    blitParallelBackground_indiv(matrixpos[3],arrayimg[3],arrayspeed[3],5)
 
 # Defina o título da janela
 pygame.display.set_caption("Projeto 08N JogosLab")
@@ -102,6 +104,7 @@ pygame.display.set_caption("Projeto 08N JogosLab")
 # Loop principal do jogo
 executando = True
 while executando:
+    clock.tick(30)
     for evento in pygame.event.get():
         if evento.type == pygame.QUIT:
             executando = False
@@ -117,6 +120,13 @@ while executando:
 
     # Limpar a tela
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
+    road_png = pygame.image.load("assets/road.png")
+    
+    for i in range(2):
+        tela.blit(road_png,(array_road[i],240))
+        array_road[i]-=5
+        if array_road[i] <= -1264:
+            array_road[i] = max(array_road)+1264-5
 
 
     #definindo posições, img e velocidades por fase
