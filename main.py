@@ -39,12 +39,10 @@ class AnimatedSprite(pygame.sprite.Sprite):
 
 
 # Importar a imagem do corredor
-sprite_image_files = ["Run (1).png","RUn (2).png", "Run (3).png", "Run (4).png", "Run (5).png", "Run (6).png", "Run (7).png", "Run (8).png"]
+sprite_image_files = ["Run (1).png","Run (2).png", "Run (3).png", "Run (4).png", "Run (5).png", "Run (6).png", "Run (7).png", "Run (8).png"]
 for i in range(len(sprite_image_files)):
     sprite_image_files[i] = "assets\\sprite\\" + sprite_image_files[i]
 sprite_main = AnimatedSprite(sprite_image_files,0,0,40)
-#scale_sprite = (160/sprite_main.get_height())
-#sprite_main = pygame.transform.scale(sprite_main,(scale_sprite*sprite_main.get_width(),scale_sprite*sprite_main.get_height()))
 
 # Importar o fundo fase 1
 # Considerando que todas as imagens de um parallel vão ter mesmo tamanho, vou deixar o código eficiente
@@ -54,29 +52,29 @@ background1_1 = pygame.transform.scale(background1_1,(scale_background*backgroun
 
 #2
 background1_2 = pygame.image.load("assets/parallax-forest-lights.png")
-# scale_background = (240/background1_1.get_height())
 background1_2 = pygame.transform.scale(background1_2,(scale_background*background1_2.get_width(),scale_background*background1_2.get_height()))
 
 #3
 background1_3 = pygame.image.load("assets/parallax-forest-middle-trees.png")
-# scale_background = (240/background1_1.get_height())
 background1_3 = pygame.transform.scale(background1_3,(scale_background*background1_3.get_width(),scale_background*background1_3.get_height()))
 
 #4
 background1_4 = pygame.image.load("assets/parallax-forest-front-trees.png")
-# scale_background = (240/background1_1.get_height())
 background1_4 = pygame.transform.scale(background1_4,(scale_background*background1_4.get_width(),scale_background*background1_4.get_height()))
 
+road_png = pygame.image.load("assets/road.png")
 
-# Definir variáveis para o jogo
 
+# Velocidade dos backgrounds
 velocidade1 = 1
 velocidade2 = 2
 velocidade3 = 3
 velocidade4 = 4
 
+# Definir variáveis para o jogo
 pos = 0
 
+# Array de posições dos backgrounds
 background1_x = [0,408,816,1224,1632]
 background2_x = [0,408,816,1224,1632]
 background3_x = [0,408,816,1224,1632]
@@ -120,8 +118,8 @@ while executando:
 
     # Limpar a tela
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
-    road_png = pygame.image.load("assets/road.png")
-    
+
+    # Blitando o fundo da rua
     for i in range(2):
         tela.blit(road_png,(array_road[i],240))
         array_road[i]-=5
@@ -129,7 +127,7 @@ while executando:
             array_road[i] = max(array_road)+1264-5
 
 
-    #definindo posições, img e velocidades por fase
+    # Definindo posições, img e velocidades por fase
     matrixpos = [background1_x,background2_x,background3_x,background4_x]
     arrayimg = [background1_1,background1_2,background1_3,background1_4]
     arrayspeed = [velocidade1,velocidade2,velocidade3,velocidade4]
