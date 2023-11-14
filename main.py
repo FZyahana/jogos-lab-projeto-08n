@@ -68,6 +68,8 @@ fire_png = pygame.image.load("assets/fire.png")
 scale_fire = (160/fire_png.get_height())
 fire_png = pygame.transform.scale(fire_png,(scale_fire*fire_png.get_width(),scale_fire*fire_png.get_height()))
 
+menu_png = pygame.image.load("assets/menu.png")
+
 # Velocidade dos backgrounds
 velocidade1 = 1
 velocidade2 = 2
@@ -75,7 +77,7 @@ velocidade3 = 3
 velocidade4 = 4
 
 # Definir variáveis para o jogo
-dificuldade = 0
+dificuldade = 2
 pos = 0
 qtd_obstacles = [30,50,80]
 spd_obstacles = [5,10,15]
@@ -89,7 +91,6 @@ background4_x = [0,408,816,1224,1632]
 obstacles_x = [(((i*80)+300*i))+1280 for i in range(qtd_obstacles[dificuldade])]
 obstacles_y = [10] * qtd_obstacles[dificuldade]
 array_road = [((i*1264)) for i in range(round(max(obstacles_x)/1264)+1)]
-print(array_road)
 
 # Função pra blitar os cenários
 def blitParallelBackground_indiv(arraypos,img,speed,qtd):
@@ -110,6 +111,7 @@ def blitParallelBackground_full(matrixpos,arrayimg,arrayspeed):
 pygame.display.set_caption("Projeto 08N JogosLab")
 
 # Loop principal do jogo
+menu = True
 executando = True
 while executando:
     clock.tick(30)
@@ -126,34 +128,44 @@ while executando:
     
     # Limpar a tela
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
-
-    # Blitando o fundo da rua
-    for i in range(len(array_road)):
-        if array_road[i] <= largura and array_road[i] >= -1264:
-            tela.blit(road_png,(array_road[i],240))
-        array_road[i]-=spd_obstacles[dificuldade]
-
-    # Blitando os obstaculos
-    for i in range(qtd_obstacles[dificuldade]):
-        if obstacles_x[i] <= largura and obstacles_x[i] >= -80:
-            if obstacles_y[i] == 10:
-                obstacles_y[i] = pos    
-            tela.blit(fire_png,(obstacles_x[i],240+(obstacles_y[i])*160))
-        obstacles_x[i]-=spd_obstacles[dificuldade]
+    if menu:
+        tela.blit(menu_png,(0,0))
 
 
+    else:
+        # Blitando o fundo da rua
+        for i in range(len(array_road)):
+            if array_road[i] <= largura and array_road[i] >= -1264:
+                tela.blit(road_png,(array_road[i],240))
+            array_road[i]-=spd_obstacles[dificuldade]
+
+        # Blitando os obstaculos
+        for i in range(qtd_obstacles[dificuldade]):
+            if obstacles_x[i] <= largura and obstacles_x[i] >= -80:
+                if obstacles_y[i] == 10:
+                    obstacles_y[i] = pos    
+                tela.blit(fire_png,(obstacles_x[i],240+(obstacles_y[i])*160))
+            if (obstacles_x[i] <=110 and obstacles_x[i] > -30) and obstacles_y[i] == pos:
+                
+                
+                # para checar o atrito ⬇️
+                pygame.time.delay(50)
+            obstacles_x[i]-=spd_obstacles[dificuldade]
 
 
-    # Definindo posições, img e velocidades por fase
-    matrixpos = [background1_x,background2_x,background3_x,background4_x]
-    arrayimg = [background1_1,background1_2,background1_3,background1_4]
-    arrayspeed = [velocidade1,velocidade2,velocidade3,velocidade4]
-    blitParallelBackground_full(matrixpos,arrayimg,arrayspeed)
 
 
-    # Desenhar personagem principal
-    tela.blit(sprite_main.image,(0,240+pos*160))
-    sprite_main.update()
+
+        # Definindo posições, img e velocidades por fase
+        matrixpos = [background1_x,background2_x,background3_x,background4_x]
+        arrayimg = [background1_1,background1_2,background1_3,background1_4]
+        arrayspeed = [velocidade1,velocidade2,velocidade3,velocidade4]
+        blitParallelBackground_full(matrixpos,arrayimg,arrayspeed)
+
+
+        # Desenhar personagem principal
+        tela.blit(sprite_main.image,(0,240+pos*160))
+        sprite_main.update()
 
     # Atualizar a tela
     pygame.display.flip()
