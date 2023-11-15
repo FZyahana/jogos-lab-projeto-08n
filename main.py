@@ -50,45 +50,89 @@ def blitParallelBackground_indiv(arraypos, img, speed, qtd):
             arraypos[i] = max(arraypos)+408-5
 
 
-def blitParallelBackground_full(backgrounds_x, backgrounds, spd_backgrounds):
+def blitParallelBackground_full(backgrounds_x, backgrounds, spd_backgrounds,qtd):
+    for i in range(len(backgrounds)):
+        blitParallelBackground_indiv(backgrounds_x[i], backgrounds[i],spd_backgrounds[i], qtd)
 
-    blitParallelBackground_indiv(backgrounds_x[0], backgrounds[0], spd_backgrounds[0], 5)
-    blitParallelBackground_indiv(backgrounds_x[1], backgrounds[1], spd_backgrounds[1], 5)
-    blitParallelBackground_indiv(backgrounds_x[2], backgrounds[2], spd_backgrounds[2], 5)
-    blitParallelBackground_indiv(backgrounds_x[3], backgrounds[3], spd_backgrounds[3], 5)
+def fixScaleBg(background_img,altura):
+    scale = altura/background_img.get_height()
+    return pygame.transform.scale(background_img,(scale*background_img.get_width(),scale*background_img.get_height()))
 
 def setParallelBackground(dificuldade):
     if dificuldade == 0:
         # Importar o fundo fase 1
         # Considerando que todas as imagens de um parallel vão ter mesmo tamanho, vou deixar o código eficiente
-        background1 = pygame.image.load(
-            "assets/fase0/parallax-forest-back-trees.png")
-        scale_background = (240/background1.get_height())
-        background1 = pygame.transform.scale(
-            background1, (scale_background*background1.get_width(), scale_background*background1.get_height()))
-
+        background1 = pygame.image.load("assets/fase0/0.png")
+        background1 = fixScaleBg(background1,240)
         # 2
-        background2 = pygame.image.load("assets/fase0/parallax-forest-lights.png")
-        background2 = pygame.transform.scale(
-            background2, (scale_background*background2.get_width(), scale_background*background2.get_height()))
+        background2 = pygame.image.load("assets/fase0/1.png")
+        background2 = fixScaleBg(background2,240)
 
         # 3
-        background3 = pygame.image.load(
-            "assets/fase0/parallax-forest-middle-trees.png")
-        background3 = pygame.transform.scale(
-            background3, (scale_background*background3.get_width(), scale_background*background3.get_height()))
+        background3 = pygame.image.load("assets/fase0/2.png")
+        background3 = fixScaleBg(background3,240)
 
         # 4
-        background4 = pygame.image.load(
-            "assets/fase0/parallax-forest-front-trees.png")
-        background4 = pygame.transform.scale(
-            background4, (scale_background*background4.get_width(), scale_background*background4.get_height()))
+        background4 = pygame.image.load("assets/fase0/3.png")
+        background4 = fixScaleBg(background4,240)
+
+
+        # obstaculo
+        obstacle_png = pygame.image.load("assets/fase0/fire.png")
+        scale_obstacle = (160/obstacle_png.get_height())
+        obstacle_png = pygame.transform.scale(
+            obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
+        backgrounds = [background1,background2, background3, background4]
+
+    elif dificuldade == 1:
+        background1 = pygame.image.load("assets/fase1/0.png")
+        background1 = fixScaleBg(background1,240)
+
+        background2 = pygame.image.load("assets/fase1/1.png")
+        background2 = fixScaleBg(background2,240)
+
+        background3 = pygame.image.load("assets/fase1/2.png")
+        background3 = fixScaleBg(background3,240)
+
+        background4 = pygame.image.load("assets/fase1/3.png")
+        background4 = fixScaleBg(background4,240)
+
+        backgrounds = [background1,background2, background3, background4]
 
         obstacle_png = pygame.image.load("assets/fase0/fire.png")
-        scale_fire = (160/obstacle_png.get_height())
+        scale_obstacle = (160/obstacle_png.get_height())
         obstacle_png = pygame.transform.scale(
-            obstacle_png, (scale_fire*obstacle_png.get_width(), scale_fire*obstacle_png.get_height()))
-        backgrounds = [background1,background2, background3, background4]
+            obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
+    
+    elif dificuldade == 2:
+        background1 = pygame.image.load("assets/fase2/0.png")
+        background1 = fixScaleBg(background1,240)
+
+        background2 = pygame.image.load("assets/fase2/1.png")
+        background2 = fixScaleBg(background2,240)
+
+        background3 = pygame.image.load("assets/fase2/2.png")
+        background3 = fixScaleBg(background3,240)
+
+        background4 = pygame.image.load("assets/fase2/3.png")
+        background4 = fixScaleBg(background4,240)
+
+        background5 = pygame.image.load("assets/fase2/4.png")
+        background5 = fixScaleBg(background5,240)
+
+        background6 = pygame.image.load("assets/fase2/5.png")
+        background6 = fixScaleBg(background6,240)
+
+        background7 = pygame.image.load("assets/fase2/6.png")
+        background7 = fixScaleBg(background7,240)
+
+        backgrounds = [background1,background2, background3, background4, background5, background6, background7]
+
+        obstacle_png = pygame.image.load("assets/fase0/fire.png")
+        scale_obstacle = (160/obstacle_png.get_height())
+        obstacle_png = pygame.transform.scale(
+            obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
+
 
     return backgrounds, obstacle_png
 
@@ -104,27 +148,27 @@ road_png = pygame.image.load("assets/road.png")
 menu_png = pygame.image.load("assets/menu.png")
 
 # Definir variáveis para o jogo
-dificuldade = 0
+dificuldade = 2
 pos = 0
 qtd_obstacles = [30, 50, 80]
 spd_obstacles = [15, 30, 45]
-
+backgrounds, obstacle_png = setParallelBackground(dificuldade)
 
 # Array de posições dos backgrounds
-backgrounds_x = [[(x*408) for x in range(5)] for i in range(4)]
-print(backgrounds_x)
+qtd_backgrounds_x = 5
+backgrounds_x = [[(x*408) for x in range(qtd_backgrounds_x)] for i in range(len(backgrounds))]
 
 obstacles_x = [(((i*80)+300*i)) +
                1280 for i in range(qtd_obstacles[dificuldade])]
 obstacles_y = [10] * qtd_obstacles[dificuldade]
 array_road = [((i*1264)) for i in range(round(max(obstacles_x)/1264)+1)]
-spd_backgrounds = [1,2,3,4]
+spd_backgrounds = [i+1 for i in range(len(backgrounds))]
 
 
 
 # Defina o título da janela
 pygame.display.set_caption("Projeto 08N JogosLab")
-backgrounds, obstacle_png = setParallelBackground(dificuldade)
+
 # Loop principal do jogo
 menu = True
 executando = True
@@ -194,7 +238,7 @@ while executando:
                 spd_backgrounds = [2*i for i in spd_backgrounds]
 
         
-        blitParallelBackground_full(backgrounds_x, backgrounds, spd_backgrounds)
+        blitParallelBackground_full(backgrounds_x, backgrounds, spd_backgrounds,qtd_backgrounds_x)
 
         # Desenhar personagem principal
         tela.blit(sprite_main.image, (0, 240+pos*160))
