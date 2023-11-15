@@ -39,6 +39,12 @@ class AnimatedSprite(pygame.sprite.Sprite):
             self.current_image = (self.current_image + 1) % len(self.images)
             self.image = self.images[self.current_image]
 
+class Obstacle(pygame.sprite.Sprite):
+    def __init__(self, image):
+        super().__init__()
+        self.image = image
+
+
 # Função pra blitar os cenários
 
 
@@ -82,6 +88,8 @@ def setParallelBackground(dificuldade):
         scale_obstacle = (160/obstacle_png.get_height())
         obstacle_png = pygame.transform.scale(
             obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
+        
+        obstacle = Obstacle(obstacle_png)
         backgrounds = [background1,background2, background3, background4]
 
     elif dificuldade == 1:
@@ -99,10 +107,11 @@ def setParallelBackground(dificuldade):
 
         backgrounds = [background1,background2, background3, background4]
 
-        obstacle_png = pygame.image.load("assets/fase0/fire.png")
+        obstacle_png = pygame.image.load("assets/fase1/obstacles.png")
         scale_obstacle = (160/obstacle_png.get_height())
         obstacle_png = pygame.transform.scale(
             obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
+        obstacle = Obstacle(obstacle_png)
     
     elif dificuldade == 2:
         background1 = pygame.image.load("assets/fase2/0.png")
@@ -132,9 +141,10 @@ def setParallelBackground(dificuldade):
         scale_obstacle = (160/obstacle_png.get_height())
         obstacle_png = pygame.transform.scale(
             obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
+        obstacle = Obstacle(obstacle_png)
 
 
-    return backgrounds, obstacle_png
+    return backgrounds, obstacle
 
 # Importar a imagem do corredor
 sprite_image_files = ["Run (1).png", "Run (2).png", "Run (3).png", "Run (4).png",
@@ -146,16 +156,23 @@ sprite_main = AnimatedSprite(sprite_image_files, 0, 0, 40)
 
 road_png = pygame.image.load("assets/road.png")
 menu_png = pygame.image.load("assets/menu.png")
+gameover_png = pygame.image.load("assets/gameover.png")
+hit = pygame.mixer.Sound("assets/sounds/colision.mp3")
+
+music = pygame.mixer.Sound("assets/sounds/background_music.mp3")
+music.set_volume(0.2)
 
 # Definir variáveis para o jogo
-dificuldade = 2
+dificuldade = 0
 pos = 0
 qtd_obstacles = [30, 50, 80]
 spd_obstacles = [15, 30, 45]
-backgrounds, obstacle_png = setParallelBackground(dificuldade)
 
 # Array de posições dos backgrounds
 qtd_backgrounds_x = 5
+
+# Variaveis pra cada fase
+backgrounds, obstacle = setParallelBackground(dificuldade)
 backgrounds_x = [[(x*408) for x in range(qtd_backgrounds_x)] for i in range(len(backgrounds))]
 
 obstacles_x = [(((i*80)+300*i)) +
@@ -172,6 +189,11 @@ pygame.display.set_caption("Projeto 08N JogosLab")
 # Loop principal do jogo
 menu = True
 executando = True
+gameover = False
+sound_play_hit = False
+instrucoes = False
+
+music.play()
 while executando:
     clock.tick(60)
     for evento in pygame.event.get():
@@ -185,10 +207,27 @@ while executando:
                 if pos != 2:
                     pos += 1
         elif evento.type == pygame.MOUSEBUTTONDOWN:
-            if botao_jogar.collidepoint(evento.pos):
-                menu = False
-            elif botao_instrucao.collidepoint(evento.pos):
-                print("tchau8uuuuuuu")
+            if menu:
+                if botao_jogar.collidepoint(evento.pos):
+                    menu = False
+                    dificuldade = 0
+                    backgrounds, obstacle = setParallelBackground(dificuldade)
+                    backgrounds_x = [[(x*408) for x in range(qtd_backgrounds_x)] for i in range(len(backgrounds))]
+
+                    obstacles_x = [(((i*80)+300*i)) +
+                                1280 for i in range(qtd_obstacles[dificuldade])]
+                    obstacles_y = [10] * qtd_obstacles[dificuldade]
+                    array_road = [((i*1264)) for i in range(round(max(obstacles_x)/1264)+1)]
+                    spd_backgrounds = [i+1 for i in range(len(backgrounds))]
+                    sound_play_hit = False
+                elif botao_instrucao.collidepoint(evento.pos):
+                    print("tchau8uuuuuuu")
+            elif gameover:
+                if (botao_menu.collidepoint(evento.pos)):
+                    gameover = False
+                    menu = True
+                    music.play()
+                
 
     # Limpar a tela
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
@@ -198,8 +237,30 @@ while executando:
         pygame.draw.rect(tela, (0, 0, 0, 0), botao_jogar)
         pygame.draw.rect(tela, (0, 0, 0, 0), botao_instrucao)
         tela.blit(menu_png, (0, 0))
-
+    elif gameover:
+        tempo_final = pygame.time.get_ticks()
+        pontuacao = tempo_final - tempo_inicial
+        music.stop()
+        
+        botao_menu = pygame.Rect(412.43,581.02,459.14,77.87)
+        pygame.draw.rect(tela,(0,0,0,0), botao_menu)
+        tela.blit(gameover_png,(0,0))
+        
+        pygame.display.flip()
+        if sound_play_hit == False:
+            hit.play()
+            hit.set_volume(0.2)
+            sound_play_hit = True
+            jogador = input("Nome: ")
+            with open('pontuacoes.txt', 'a') as file:
+                file.write(jogador + ": " + str(pontuacao) +'\n')
+            
+        
+    elif instrucoes:
+        print("oi")
+        
     else:
+        tempo_inicial = pygame.time.get_ticks()
 
         # Blitando o fundo da rua
         for i in range(len(array_road)):
@@ -215,27 +276,33 @@ while executando:
 
                     obstacles_y[i] = pos
 
-                tela.blit(obstacle_png,
+                tela.blit(obstacle.image,
                           (obstacles_x[i], 240+(obstacles_y[i])*160))
 
             if (obstacles_x[i] <= 110 and obstacles_x[i] > -30) and obstacles_y[i] == pos:
 
                 print("atritou")
-                # para checar o atrito ⬇️
-                # pygame.time.delay(50)
+                gameover = True
             obstacles_x[i] -= spd_obstacles[dificuldade]
 
-            if (obstacles_x[qtd_obstacles[dificuldade]-1] < -80) and (dificuldade < 2):
+            if (obstacles_x[qtd_obstacles[dificuldade]-1] < -80):
+                if dificuldade < 2:
 
-                dificuldade += 1
-                backgrounds, obstacle_png = setParallelBackground(dificuldade)
-                
-                obstacles_x = [
-                    (((i*80)+300*i))+1280 for i in range(qtd_obstacles[dificuldade])]
-                obstacles_y = [10] * qtd_obstacles[dificuldade]
-                array_road = [((i*1264))
-                              for i in range(round(max(obstacles_x)/1264)+1)]
-                spd_backgrounds = [2*i for i in spd_backgrounds]
+                    dificuldade += 1
+                    backgrounds, obstacle = setParallelBackground(dificuldade)
+                    backgrounds_x = [[(x*408) for x in range(qtd_backgrounds_x)] for i in range(len(backgrounds))]
+                    obstacles_x = [
+                        (((i*80)+300*i))+1280 for i in range(qtd_obstacles[dificuldade])]
+                    obstacles_y = [10] * qtd_obstacles[dificuldade]
+                    array_road = [((i*1264))
+                                for i in range(round(max(obstacles_x)/1264)+1)]
+                    
+                    if dificuldade == 2:
+                        spd_backgrounds = [4*i for i in range(7)]
+                    else:
+                        spd_backgrounds = [2*i for i in spd_backgrounds]
+                else:
+                    gameover = True
 
         
         blitParallelBackground_full(backgrounds_x, backgrounds, spd_backgrounds,qtd_backgrounds_x)
@@ -249,4 +316,18 @@ while executando:
 
 # Encerrar o Pygame
 pygame.quit()
+
+with open('pontuacoes.txt', 'r') as file:
+    linhas = [line.strip() for line in file]
+
+# Criando uma lista de tuplas (nome, pontuacao) a partir das linhas
+dados_pontuacao = [(linha.split(': ')[0], int(linha.split(': ')[1])) for linha in linhas]
+
+# Ordenando a lista com base nas pontuações (em ordem decrescente)
+dados_pontuacao_ordenados = sorted(dados_pontuacao, key=lambda x: x[1], reverse=True)
+
+# Imprimindo no console
+for nome, pontuacao in dados_pontuacao_ordenados:
+    print(f'Jogador: {nome}, Pontuação: {pontuacao}')
+
 sys.exit()
