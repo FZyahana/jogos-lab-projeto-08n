@@ -137,7 +137,7 @@ def setParallelBackground(dificuldade):
 
         backgrounds = [background1,background2, background3, background4, background5, background6, background7]
 
-        obstacle_png = pygame.image.load("assets/fase0/fire.png")
+        obstacle_png = pygame.image.load("assets/fase2/obstacles.png")
         scale_obstacle = (160/obstacle_png.get_height())
         obstacle_png = pygame.transform.scale(
             obstacle_png, (scale_obstacle*obstacle_png.get_width(), scale_obstacle*obstacle_png.get_height()))
@@ -157,10 +157,11 @@ sprite_main = AnimatedSprite(sprite_image_files, 0, 0, 40)
 road_png = pygame.image.load("assets/road.png")
 menu_png = pygame.image.load("assets/menu.png")
 gameover_png = pygame.image.load("assets/gameover.png")
+instrucoes_png = pygame.image.load("assets/instrucoes.png")
 hit = pygame.mixer.Sound("assets/sounds/colision.mp3")
 
 music = pygame.mixer.Sound("assets/sounds/background_music.mp3")
-music.set_volume(0.2)
+music.set_volume(0.1)
 
 # Definir variáveis para o jogo
 dificuldade = 0
@@ -171,18 +172,6 @@ spd_obstacles = [15, 30, 45]
 # Array de posições dos backgrounds
 qtd_backgrounds_x = 5
 
-# Variaveis pra cada fase
-backgrounds, obstacle = setParallelBackground(dificuldade)
-backgrounds_x = [[(x*408) for x in range(qtd_backgrounds_x)] for i in range(len(backgrounds))]
-
-obstacles_x = [(((i*80)+300*i)) +
-               1280 for i in range(qtd_obstacles[dificuldade])]
-obstacles_y = [10] * qtd_obstacles[dificuldade]
-array_road = [((i*1264)) for i in range(round(max(obstacles_x)/1264)+1)]
-spd_backgrounds = [i+1 for i in range(len(backgrounds))]
-
-
-
 # Defina o título da janela
 pygame.display.set_caption("Projeto 08N JogosLab")
 
@@ -192,8 +181,9 @@ executando = True
 gameover = False
 sound_play_hit = False
 instrucoes = False
+sound_toggle = True
 
-music.play()
+music.play(loops=-1)
 while executando:
     clock.tick(60)
     for evento in pygame.event.get():
@@ -209,11 +199,11 @@ while executando:
         elif evento.type == pygame.MOUSEBUTTONDOWN:
             if menu:
                 if botao_jogar.collidepoint(evento.pos):
+                    tempo_inicial = pygame.time.get_ticks()
                     menu = False
                     dificuldade = 0
                     backgrounds, obstacle = setParallelBackground(dificuldade)
                     backgrounds_x = [[(x*408) for x in range(qtd_backgrounds_x)] for i in range(len(backgrounds))]
-
                     obstacles_x = [(((i*80)+300*i)) +
                                 1280 for i in range(qtd_obstacles[dificuldade])]
                     obstacles_y = [10] * qtd_obstacles[dificuldade]
@@ -221,26 +211,37 @@ while executando:
                     spd_backgrounds = [i+1 for i in range(len(backgrounds))]
                     sound_play_hit = False
                 elif botao_instrucao.collidepoint(evento.pos):
-                    print("tchau8uuuuuuu")
-            elif gameover:
+                    menu = False
+                    instrucoes = True
+                elif botao_som.collidepoint(evento.pos):
+                    if sound_toggle:
+                        music.stop()
+                    else:
+                        music.play(loops=-1)
+                    sound_toggle = not(sound_toggle)
+            elif gameover or instrucoes:
                 if (botao_menu.collidepoint(evento.pos)):
                     gameover = False
+                    instrucoes = False
                     menu = True
-                    music.play()
                 
 
     # Limpar a tela
     tela.fill((0, 0, 0))  # Preencher a tela com a cor preta
     if menu:
+
         botao_jogar = pygame.Rect(196.20, 479.02, 191.6, 77.87)
         botao_instrucao = pygame.Rect(759.93, 477.83, 330.14, 77.87)
+        botao_som = pygame.Rect(1112.50,27,167.5,167.5)
         pygame.draw.rect(tela, (0, 0, 0, 0), botao_jogar)
         pygame.draw.rect(tela, (0, 0, 0, 0), botao_instrucao)
+        pygame.draw.rect(tela, (0, 0, 0, 0), botao_som)
         tela.blit(menu_png, (0, 0))
+
     elif gameover:
         tempo_final = pygame.time.get_ticks()
         pontuacao = tempo_final - tempo_inicial
-        music.stop()
+        # music.stop()
         
         botao_menu = pygame.Rect(412.43,581.02,459.14,77.87)
         pygame.draw.rect(tela,(0,0,0,0), botao_menu)
@@ -248,8 +249,9 @@ while executando:
         
         pygame.display.flip()
         if sound_play_hit == False:
-            hit.play()
-            hit.set_volume(0.2)
+            if sound_toggle:
+                hit.set_volume(0.3)
+                hit.play()
             sound_play_hit = True
             jogador = input("Nome: ")
             with open('pontuacoes.txt', 'a') as file:
@@ -257,10 +259,12 @@ while executando:
             
         
     elif instrucoes:
-        print("oi")
+        botao_menu = pygame.Rect(412.43,581.02,459.14,77.87)
+        pygame.draw.rect(tela,(0,0,0,0), botao_menu)
+        tela.blit(instrucoes_png,(0,0))
         
     else:
-        tempo_inicial = pygame.time.get_ticks()
+        
 
         # Blitando o fundo da rua
         for i in range(len(array_road)):
